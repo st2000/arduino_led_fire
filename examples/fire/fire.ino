@@ -7,19 +7,14 @@ Fire fire_green(10);
 
 void setup()
 {
-  /*nothing to setup*/
+  fire_red.begin();
+  fire_green.begin(FIRE_NO_DELAY, FIRE_DIMMER_MIN, FIRE_BRIGHTER_MAX);
 }
 
 void loop()
 {
-  fire_red.begin();
-  fire_green.begin(FIRE_NO_DELAY, FIRE_DIMMER_MIN, FIRE_BRIGHTER_MAX);
-  
-  for(;;)
-  {
-    fire_red.burn();
-    fire_green.burn();
-  }
+   fire_red.burn();
+   fire_green.burn();
 }
 
 

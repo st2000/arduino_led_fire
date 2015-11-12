@@ -10,6 +10,8 @@
 #define FIRE_DIMMIER_MAX 100
 #define FIRE_NORMAL_MAX 200
 #define FIRE_BRIGHTER_MAX 254
+#define BEACON_MIN 10
+#define BEACON_MAX 80
 // Here are some flicker speed suggestions.
 // (Only delay on the first LED.  Otherwise
 //  each additional LED burn() call will cause
@@ -18,6 +20,10 @@
 #define FIRE_FAST_FLICKER 2
 #define FIRE_NORMAL_FLICKER 4
 #define FIRE_SLOW_FLICKER 6
+// Here are two pattern modes.  For
+// fire and for beacon.
+#define FIRE_FIRE 0
+#define FIRE_BEACON 1
 	
 class Fire 
 {
@@ -28,6 +34,7 @@ class Fire
 	void begin();
 	void begin(uint8_t);
 	void begin(uint8_t, uint16_t, uint16_t);
+	void begin(uint8_t, uint16_t, uint16_t, uint8_t);
 	void burn();
 	
 	private:
@@ -42,6 +49,7 @@ class Fire
 	uint8_t fade_delay;
 	uint16_t fade_min_limit;
 	uint16_t fade_max_limit;
+	uint8_t fade_mode;
 };
 	
 #endif

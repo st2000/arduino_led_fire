@@ -8,7 +8,7 @@ Fire fire_green(10);
 void setup()
 {
   fire_red.begin();
-  fire_green.begin(FIRE_NO_DELAY, FIRE_DIMMER_MIN, FIRE_BRIGHTER_MAX);
+  fire_green.begin(FIRE_NO_DELAY, BEACON_MIN, BEACON_MAX, FIRE_BEACON);
 }
 
 void loop()

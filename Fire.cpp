@@ -1,8 +1,5 @@
 #include "Fire.h" 
 
-#include <stdio.h>
-#include <string.h>
-#include <inttypes.h>
 #include "Arduino.h"
 
 // Constructor uses passed value to create an instance for that Arduino Uno pin.
@@ -17,16 +14,21 @@ Fire::~Fire(){/*nothing to destruct*/}
 // Start the fire.
 void Fire::begin()
 {
-	begin(FIRE_NORMAL_FLICKER, FIRE_NORMAL_MIN, FIRE_NORMAL_MAX);
+	begin(FIRE_NORMAL_FLICKER, FIRE_NORMAL_MIN, FIRE_NORMAL_MAX, FIRE_FIRE);
 }
 
 // Start the fire.
 void Fire::begin(uint8_t formal_fade_delay)
 {
-	begin(formal_fade_delay, FIRE_NORMAL_MIN, FIRE_NORMAL_MAX);
+	begin(formal_fade_delay, FIRE_NORMAL_MIN, FIRE_NORMAL_MAX, FIRE_FIRE);
 }
 
+
 void Fire::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint16_t formal_fade_max_limit)
+{
+	begin(formal_fade_delay, FIRE_NORMAL_MIN, FIRE_NORMAL_MAX, FIRE_FIRE);
+}
+void Fire::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint16_t formal_fade_max_limit, uint8_t formal_mode)
 {
 	// Use the unique pin number as the seed for the CRC16 generator. 
 	crc = private_led_pin;
@@ -36,6 +38,7 @@ void Fire::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint
 	fade_delay = formal_fade_delay;
 	fade_min_limit = formal_fade_min_limit;
 	fade_max_limit = formal_fade_max_limit;
+	fade_mode = formal_mode;
 }
 
 // Run the fire algorithm.
@@ -71,7 +74,12 @@ void Fire::burn()
 	}
 	else
 	{
-		algorithm();
+        // Only call radom algorithm is mode is fire.  Otherwise
+		// assume beacon mode.
+        if(fade_mode == FIRE_FIRE)
+		{
+		    algorithm();
+		}
 	}
 }
 

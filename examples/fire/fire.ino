@@ -8,13 +8,21 @@ Fire fire_green(10);
 void setup()
 {
   fire_red.begin();
-  fire_green.begin(FIRE_NO_DELAY, BEACON_MIN, BEACON_MAX, FIRE_BEACON);
+  fire_green.begin(FIRE_NORMAL_FLICKER, BEACON_MIN, BEACON_MAX, FIRE_BEACON);
+  
+  fire_red.speed((uint16_t)4, doit);
 }
 
 void loop()
 {
-   fire_red.burn();
+///   fire_red.burn();
    fire_green.burn();
+   
+   fire_red.run();
 }
 
 
+void doit()
+{
+  fire_red.burn();
+}

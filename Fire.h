@@ -25,6 +25,8 @@
 #define FIRE_FIRE 0
 #define FIRE_BEACON 1
 	
+typedef void (*timer_callback)(void);
+	
 class Fire 
 {
 	public:
@@ -36,6 +38,9 @@ class Fire
 	void begin(uint8_t, uint16_t, uint16_t);
 	void begin(uint8_t, uint16_t, uint16_t, uint8_t);
 	void burn();
+	
+	void speed(uint16_t delay_ms, timer_callback function_name);
+	void run();
 	
 	private:
 	
@@ -50,6 +55,12 @@ class Fire
 	uint16_t fade_min_limit;
 	uint16_t fade_max_limit;
 	uint8_t fade_mode;
+	uint8_t timer_count;
+	
+	uint8_t callback_delay[10];
+    timer_callback callbacks[10];
+    uint16_t time_last_called[10];
+
 };
 	
 #endif

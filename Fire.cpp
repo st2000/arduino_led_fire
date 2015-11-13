@@ -154,6 +154,19 @@ void Fire::algorithm()
 	}
 }
 
+void Fire::speed(uint16_t delay_ms, timer_callback function_name) 
+{
+    callback_delay[timer_count] = delay_ms;
+    callbacks[timer_count] = function_name;
+///    time_last_called[timer_count] = elapsed();
+    time_last_called[timer_count] = millis();
+   timer_count++;
+}
+
+void Fire::run()
+{
+}
+
 
 
 

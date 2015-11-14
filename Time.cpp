@@ -1,5 +1,4 @@
 #include "Time.h" 
-
 #include "Arduino.h"
 
 // Constructor.
@@ -10,25 +9,26 @@ Time::~Time(){/*nothing to destruct*/}
 
 void Time::speed(uint16_t delay_ms, timer_callback function_name) 
 {
-	callback_delay[timer_count] = delay_ms;
-	callbacks[timer_count] = function_name;
-	time_last_called[timer_count] = millis();
-	timer_count++;
+	callback_info info;
+	info.callback_delay = delay_ms;
+	info.callback = function_name;
+	info.time_last_called = millis();
+	callbackData.push_back(info);
 }
 
 void Time::run()
 {
-	uint8_t i;
 	uint16_t time_now;
-
+	std::vector<callback_info>::iterator it;
+	
 	time_now = millis();
 
-	for (i = 0; i < timer_count; i++) 
+	for(it = callbackData.begin(); it != callbackData.end(); it++)
 	{
-		if (time_now - time_last_called[i] >= callback_delay[i]) 
+		if((it->time_last_called + it->callback_delay) < time_now)
 		{
-			time_last_called[i] += callback_delay[i];
-			(*callbacks[i])();
+			it->time_last_called += it->callback_delay;
+			(*(it->callback))();
 		}
 	}
 }

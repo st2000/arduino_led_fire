@@ -2,6 +2,9 @@
 #define Time_H
 
 #include <inttypes.h>
+#include <StandardCplusplus.h>
+#include <vector>
+#include <iterator>
 	
 typedef void (*timer_callback)(void);
 	
@@ -16,11 +19,14 @@ class Time
 	void run();
 	
 	private:
-	uint8_t timer_count;
-	
-	uint8_t callback_delay[10];
-    timer_callback callbacks[10];
-    uint16_t time_last_called[10];
+
+	struct callback_info
+	{
+		uint16_t callback_delay;
+		timer_callback callback;
+		uint16_t time_last_called;
+	};
+	std::vector<callback_info> callbackData;
 };
 
 #endif

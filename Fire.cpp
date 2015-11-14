@@ -50,9 +50,9 @@ void Fire::burn()
 		if(fade_direction)
 		{
 			brightness++;
-			}
-			else
-			{
+		}
+		else
+		{
 			brightness--;
 		}
 		analogWrite(private_led_pin, brightness);
@@ -67,18 +67,14 @@ void Fire::burn()
 		{
 			fade_direction = false;
 		}
-		if(fade_delay > 0)
-		{
-			delay(fade_delay);
-		}
 	}
 	else
 	{
-        // Only call radom algorithm is mode is fire.  Otherwise
+		// Only call radom algorithm is mode is fire.  Otherwise
 		// assume beacon mode.
-        if(fade_mode == FIRE_FIRE)
+		if(fade_mode == FIRE_FIRE)
 		{
-		    algorithm();
+			algorithm();
 		}
 	}
 }
@@ -156,16 +152,29 @@ void Fire::algorithm()
 
 void Fire::speed(uint16_t delay_ms, timer_callback function_name) 
 {
-    callback_delay[timer_count] = delay_ms;
-    callbacks[timer_count] = function_name;
-///    time_last_called[timer_count] = elapsed();
-    time_last_called[timer_count] = millis();
-   timer_count++;
+	callback_delay[timer_count] = delay_ms;
+	callbacks[timer_count] = function_name;
+	time_last_called[timer_count] = millis();
+	timer_count++;
 }
 
 void Fire::run()
 {
+	uint8_t i;
+	uint16_t time_now;
+
+	time_now = millis();
+
+	for (i = 0; i < timer_count; i++) 
+	{
+		if (time_now - time_last_called[i] >= callback_delay[i]) 
+		{
+			time_last_called[i] += callback_delay[i];
+			(*callbacks[i])();
+		}
+	}
 }
+
 
 
 

@@ -9,20 +9,23 @@ void setup()
 {
   fire_red.begin();
   fire_green.begin(FIRE_NORMAL_FLICKER, BEACON_MIN, BEACON_MAX, FIRE_BEACON);
-  
+
   fire_red.speed((uint16_t)4, doit);
+  fire_green.speed((uint16_t)5, doitto);
 }
 
 void loop()
 {
-///   fire_red.burn();
-   fire_green.burn();
-   
+   fire_green.run();
    fire_red.run();
 }
-
 
 void doit()
 {
   fire_red.burn();
+}
+
+void doitto()
+{
+  fire_green.burn();
 }

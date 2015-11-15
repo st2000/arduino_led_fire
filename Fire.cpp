@@ -1,5 +1,4 @@
 #include "Fire.h" 
-
 #include "Arduino.h"
 
 // Constructor uses passed value to create an instance for that Arduino Uno pin.
@@ -150,6 +149,10 @@ void Fire::algorithm()
 	}
 }
 
+void Fire::get_fire_pt(void * p)
+{
+	((Fire *)p)->burn();
+}
 
 
 

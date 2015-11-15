@@ -6,16 +6,19 @@
 #include <vector>
 #include <iterator>
 	
-typedef void (*timer_callback)(void);
-	
+typedef void (*timer_callback)(void *);
+
+#include <Fire.h>
+
+typedef void (Fire::*fireMemFn)(void);
+
 class Time
 {
 	public:
 	
 	Time();
 	~Time();
-	
-	void speed(uint16_t delay_ms, timer_callback function_name);
+	void speed(uint16_t delay_ms, timer_callback function_name, void * inst);
 	void run();
 	
 	private:
@@ -25,6 +28,8 @@ class Time
 		uint16_t callback_delay;
 		timer_callback callback;
 		uint16_t time_last_called;
+		void * inst;
+		uint16_t time_old;
 	};
 	std::vector<callback_info> callbackData;
 };

@@ -22,7 +22,7 @@ class Time
 	void run();
 	
 	private:
-
+	
 	struct callback_info
 	{
 		uint16_t callback_delay;

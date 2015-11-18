@@ -51,12 +51,5 @@ void Time::run()
 			(*(it->callback))(it->inst);
 		}
 	}
-	/* ***
-	Serial.print(" next:");
-	Serial.print(time_next_call);
-	Serial.print(" time_now:");
-	Serial.print(time_now);
-	Serial.print("\t");
-	*** */
 }
 

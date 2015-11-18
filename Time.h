@@ -8,16 +8,12 @@
 	
 typedef void (*timer_callback)(void *);
 
-#include <Fire.h>
-
-typedef void (Fire::*fireMemFn)(void);
-
 class Time
 {
 	public:
 	
-	Time();
-	~Time();
+	Time(){};
+	~Time(){};
 	void speed(uint16_t delay_ms, timer_callback function_name, void * inst);
 	void run();
 	

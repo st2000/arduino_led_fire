@@ -1,12 +1,6 @@
 #include "Time.h" 
 #include "Arduino.h"
 
-// Constructor.
-Time::Time(){}
-
-// Destructor.
-Time::~Time(){/*nothing to destruct*/}
-
 void Time::speed(uint16_t delay_ms, timer_callback function_name, void * inst) 
 {
 	callback_info info;

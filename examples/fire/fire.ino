@@ -8,7 +8,7 @@ Fire fire_red(10);
 // Assign pin 10 to the gren LED.
 Fire fire_green(11);
 
-//Time time;
+Time time;
 
 void setup()
 {
@@ -19,6 +19,5 @@ void setup()
 
 void loop()
 {
-//	time.run();
-	fire_yellow.run();
+	time.run();
 }

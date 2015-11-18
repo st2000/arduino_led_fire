@@ -2,7 +2,7 @@
 #include "Time.h"
 #include "Arduino.h"
 
-Time time;
+extern Time time;
 
 // Constructor uses passed value to create an instance for that Arduino Uno pin.
 Fire::Fire(uint8_t led_pin):private_led_pin(led_pin)
@@ -158,13 +158,6 @@ void Fire::call_into_fire(void * p)
 {
 	((Fire *)p)->burn();
 }
-
-void Fire::run()
-{
-	time.run();
-}
-
-
 
 
 

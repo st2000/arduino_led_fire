@@ -25,9 +25,7 @@
 // fire and for beacon.
 #define FIRE_FIRE 0
 #define FIRE_BEACON 1
-	
-/// typedef void (*timer_callback)(void);
-	
+		
 class Fire 
 {
 	public:
@@ -39,8 +37,7 @@ class Fire
 	void begin(uint8_t, uint16_t, uint16_t);
 	void begin(uint8_t, uint16_t, uint16_t, uint8_t);
 	void burn();
-	static void call_into_fire(void *);
-	void run();
+	static void call_into_fire(void *);;
 	
 	private:
 	

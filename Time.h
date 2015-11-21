@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 	
-typedef void (*timer_callback)(void);
+typedef void (*timer_callback)(void *);
 	
 class Time
 {
@@ -16,7 +16,7 @@ class Time
 	void run();
 	
 	private:
-	uint8_t timer_count;
+	uint8_t timer_count = 0;
 	
 	uint16_t callback_delay[10];
     timer_callback callbacks[10];

@@ -1,4 +1,4 @@
-Fire	KEYWORD1
+Lights	KEYWORD1
 on		KEYWORD2
 burn	KEYWORD2
 begin	KEYWORD2

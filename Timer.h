@@ -1,16 +1,16 @@
-#ifndef Time_H
-#define Time_H
+#ifndef Timer_H
+#define Timer_H
 
 #include <inttypes.h>
 	
 typedef void (*timer_callback)(void *);
 	
-class Time
+class Timer
 {
 	public:
 	
-	Time(){};
-	~Time(){};
+	Timer(){};
+	~Timer(){};
 	
 	void speed(uint16_t delay_ms, timer_callback function_name, void * formal_inst);
 	void run();

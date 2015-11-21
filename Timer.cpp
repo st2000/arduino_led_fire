@@ -1,12 +1,7 @@
-#include "Time.h" 
-
+#include "Timer.h" 
 #include "Arduino.h"
 
-// Constructor.
-
-// Destructor.
-
-void Time::speed(uint16_t delay_ms, timer_callback function_name, void * formal_inst) 
+void Timer::speed(uint16_t delay_ms, timer_callback function_name, void * formal_inst) 
 {
 	callback_delay[timer_count] = delay_ms;
 	callbacks[timer_count] = function_name;
@@ -15,7 +10,7 @@ void Time::speed(uint16_t delay_ms, timer_callback function_name, void * formal_
 	timer_count++;
 }
 
-void Time::run()
+void Timer::run()
 {
 	uint8_t i;
 	uint16_t time_now;
@@ -36,12 +31,11 @@ void Time::run()
 			if(time_now > (time_next_call + callback_delay[i]))
 			{
 				time_last_called[i] = (0x0ffff & time_now);
-	}
+			}
 			else
 			{
 				time_last_called[i] = time_next_call;
-}
-
+			}
 			(*(callbacks[i]))(inst[i]);
 		}
 	}

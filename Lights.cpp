@@ -1,36 +1,36 @@
-#include "Fire.h" 
-#include "Time.h"
+#include "Lights.h" 
+#include "Timer.h"
 #include "Arduino.h"
 
-extern Time time;
+extern Timer timer;
 
 // Constructor uses passed value to create an instance for that Arduino Uno pin.
-Fire::Fire(uint8_t led_pin):private_led_pin(led_pin)
+Lights::Lights(uint8_t led_pin):private_led_pin(led_pin)
 {
 	pinMode(private_led_pin, OUTPUT);
 }
 
 // Destructor.
-Fire::~Fire(){/*nothing to destruct*/}
+Lights::~Lights(){/*nothing to destruct*/}
 
 // Start the fire.
-void Fire::begin()
+void Lights::begin()
 {
-	begin(FIRE_NORMAL_FLICKER, FIRE_NORMAL_MIN, FIRE_NORMAL_MAX, FIRE_FIRE);
+	begin(LIGHTS_NORMAL_FLICKER, LIGHTS_NORMAL_MIN, LIGHTS_NORMAL_MAX, LIGHTS_FIRE);
 }
 
 // Start the fire.
-void Fire::begin(uint8_t formal_fade_delay)
+void Lights::begin(uint8_t formal_fade_delay)
 {
-	begin(formal_fade_delay, FIRE_NORMAL_MIN, FIRE_NORMAL_MAX, FIRE_FIRE);
+	begin(formal_fade_delay, LIGHTS_NORMAL_MIN, LIGHTS_NORMAL_MAX, LIGHTS_FIRE);
 }
 
 
-void Fire::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint16_t formal_fade_max_limit)
+void Lights::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint16_t formal_fade_max_limit)
 {
-	begin(formal_fade_delay, FIRE_NORMAL_MIN, FIRE_NORMAL_MAX, FIRE_FIRE);
+	begin(formal_fade_delay, LIGHTS_NORMAL_MIN, LIGHTS_NORMAL_MAX, LIGHTS_FIRE);
 }
-void Fire::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint16_t formal_fade_max_limit, uint8_t formal_mode)
+void Lights::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint16_t formal_fade_max_limit, uint8_t formal_mode)
 {
 	// Use the unique pin number as the seed for the CRC16 generator. 
 	crc = private_led_pin;
@@ -42,13 +42,18 @@ void Fire::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint
 	fade_max_limit = formal_fade_max_limit;
 	fade_mode = formal_mode;
 	
-	time.speed((uint16_t)fade_delay, this->call_into_fire, this); 
+	timer.speed((uint16_t)fade_delay, this->call_into_lights, this); 
 }
 
 // Run the fire algorithm.
-void Fire::burn()
+void Lights::burn()
 {
-	fade_amount--;
+	// Only call radom algorithm is mode is fire.  Otherwise
+	// assume beacon mode.
+	if(fade_mode == LIGHTS_FIRE)
+	{
+		fade_amount--;
+	}
 	if(fade_amount > 0)
 	{
 		if(fade_direction)
@@ -74,17 +79,12 @@ void Fire::burn()
 	}
 	else
 	{
-		// Only call radom algorithm is mode is fire.  Otherwise
-		// assume beacon mode.
-		if(fade_mode == FIRE_FIRE)
-		{
-			algorithm();
-		}
+		algorithm();
 	}
 }
 
 // Run the fire algorithm.
-void Fire::algorithm()
+void Lights::algorithm()
 {
 	// Exclusive or all feed back bits.
 	// Use CRC-16 which is x^16 + x^12 + x^5 + 1 bit positions.
@@ -154,9 +154,9 @@ void Fire::algorithm()
 	}
 }
 
-void Fire::call_into_fire(void * p)
+void Lights::call_into_lights(void * p)
 {
-	((Fire *)p)->burn();
+	((Lights *)p)->burn();
 }
 
 

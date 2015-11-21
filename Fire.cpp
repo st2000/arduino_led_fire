@@ -1,6 +1,8 @@
 #include "Fire.h" 
-
+#include "Time.h"
 #include "Arduino.h"
+
+extern Time time;
 
 // Constructor uses passed value to create an instance for that Arduino Uno pin.
 Fire::Fire(uint8_t led_pin):private_led_pin(led_pin)
@@ -39,6 +41,8 @@ void Fire::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint
 	fade_min_limit = formal_fade_min_limit;
 	fade_max_limit = formal_fade_max_limit;
 	fade_mode = formal_mode;
+	
+	time.speed((uint16_t)fade_delay, this->call_into_fire, this); 
 }
 
 // Run the fire algorithm.
@@ -150,8 +154,10 @@ void Fire::algorithm()
 	}
 }
 
-
-
+void Fire::call_into_fire(void * p)
+{
+	((Fire *)p)->burn();
+}
 
 
 

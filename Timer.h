@@ -22,7 +22,7 @@ class Timer
     timer_callback callbacks[10];
     uint16_t time_last_called[10];
 	void * inst[10];
-	uint16_t time_old;
+	uint16_t time_old = 0;
 };
 
 #endif

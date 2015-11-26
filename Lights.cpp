@@ -13,23 +13,25 @@ Lights::Lights(uint8_t led_pin):private_led_pin(led_pin)
 // Destructor.
 Lights::~Lights(){/*nothing to destruct*/}
 
-// Start the fire.
+// Start fire or beacon light show.
 void Lights::begin()
 {
 	begin(LIGHTS_NORMAL_FLICKER, LIGHTS_NORMAL_MIN, LIGHTS_NORMAL_MAX, LIGHTS_FIRE);
 }
 
-// Start the fire.
+// Start fire or beacon light show.
 void Lights::begin(uint8_t formal_fade_delay)
 {
 	begin(formal_fade_delay, LIGHTS_NORMAL_MIN, LIGHTS_NORMAL_MAX, LIGHTS_FIRE);
 }
 
-
+// Start fire or beacon light show.
 void Lights::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint16_t formal_fade_max_limit)
 {
 	begin(formal_fade_delay, LIGHTS_NORMAL_MIN, LIGHTS_NORMAL_MAX, LIGHTS_FIRE);
 }
+
+// Start fire or beacon light show.
 void Lights::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint16_t formal_fade_max_limit, uint8_t formal_mode)
 {
 	// Use the unique pin number as the seed for the CRC16 generator. 
@@ -45,10 +47,17 @@ void Lights::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, ui
 	timer.speed((uint16_t)fade_delay, this->call_into_lights, this); 
 }
 
-// Run the fire algorithm.
+// Start flash (ambulance) light show.
+void Lights::begin(uint8_t formal_fade_delay, uint8_t formal_mode)
+{
+	fade_delay = formal_fade_delay;
+	timer.speed((uint16_t)fade_delay, this->call_into_flash, this); 
+}
+
+// Run the fire and / or beacon algorithm.
 void Lights::burn()
 {
-	// Only call radom algorithm is mode is fire.  Otherwise
+	// Only call radom algorithm if mode is fire.  Otherwise
 	// assume beacon mode.
 	if(fade_mode == LIGHTS_FIRE)
 	{
@@ -83,6 +92,7 @@ void Lights::burn()
 	}
 }
 
+
 // Run the fire algorithm.
 void Lights::algorithm()
 {
@@ -93,52 +103,18 @@ void Lights::algorithm()
 	{
 		// Shift all bits left by 1.
 		crc <<= 1;
+		
 		// Calculate
-		if (0x0020 & crc)
-		{
-			crc &= ~(0x0020);
-		}
-		else
-		{
-			crc |= 0x0020;
-		}
-		
-		if (0x1000 & crc)
-		{
-			crc &= ~(0x1000);
-		}
-		else
-		{
-			crc |= 0x1000;
-		}
-		
+		crc ^= 0x1020;		
 		crc |= 0x0001;
 	}
 	else
 	{
 		// Shift all bits left by 1.
 		crc <<= 1;
-		
-		if (0x0020 & crc)
-		{
-			crc |= 0x0020;
-		}
-		else
-		{
-			crc &= ~(0x0020);
-		}
-		
-		if (0x1000 & crc)
-		{
-			crc |= 0x1000;
-		}
-		else
-		{
-			crc &= ~(0x1000);
-		}
 	}
 	
-	// Randomly change the direction of fading.
+	// Randomly change the direction of fading about half the time.
 	if ((crc & 0xff) > 0x7f)
 	{
 		fade_direction = !(fade_direction);
@@ -154,11 +130,57 @@ void Lights::algorithm()
 	}
 }
 
+
+// Run the flash algorithm.
+void Lights::flash()
+{
+	if(fade_direction)
+	{
+		brightness++;
+	}
+	else
+	{
+		brightness--;
+	}
+	
+	if(
+			((brightness > 110) && (brightness < 120)) ||
+			((brightness > 130) && (brightness < 140)) ||
+			((brightness > 150) && (brightness < 160))
+			)
+	{
+		digitalWrite(private_led_pin, HIGH);
+	}
+	else
+	{
+		digitalWrite(private_led_pin, LOW);
+	}
+	
+	// Switch direction at limit.
+	if (brightness == 0)
+	{
+		fade_direction = true;
+	}
+	else
+	{
+		if (brightness == 0xff)
+		{
+			fade_direction = false;
+		}
+	}
+}
+
+
 void Lights::call_into_lights(void * p)
 {
 	((Lights *)p)->burn();
 }
 
+
+void Lights::call_into_flash(void * p)
+{
+	((Lights *)p)->flash();
+}
 
 
 

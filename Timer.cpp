@@ -5,7 +5,7 @@ void Timer::speed(uint16_t delay_ms, timer_callback function_name, void * formal
 {
 	callback_delay[timer_count] = delay_ms;
 	callbacks[timer_count] = function_name;
-	time_last_called[timer_count] = millis();
+	time_last_called[timer_count] = millis() & 0xffff;
 	inst[timer_count] = formal_inst;
 	timer_count++;
 }
@@ -14,29 +14,37 @@ void Timer::run()
 {
 	uint8_t i;
 	uint16_t time_now;
-	uint16_t time_next_call;
+	uint16_t time_delta;
 
 	time_now = 0xffff & millis();
 
-	for(i = 0; i < timer_count; i++)
+	// If a ms has not changed skip this routine.
+	if(time_now != time_old)
 	{
-		time_next_call = 0xffff & (time_last_called[i] + callback_delay[i]);
-		if(time_now < time_old)
+		// Check to see if time_now cycled through zero.
+		if(time_now > time_old)
 		{
-			time_last_called[1] = time_now;
+			time_delta = time_now - time_old;
+		}
+		else
+		{
+			time_delta = 0xffff - (time_old - time_now);
 		}
 		time_old = time_now;
-		if(time_next_call < time_now)
+
+		// Cycle through all the registered callbacks.
+		for(i = 0; i < timer_count; i++)
 		{
-			if(time_now > (time_next_call + callback_delay[i]))
+			if(callback_delay[i] < (time_delta + time_last_called[i]))
 			{
-				time_last_called[i] = (0x0ffff & time_now);
+				time_last_called[i] = 0;
+				// Make the call back.
+				(*(callbacks[i]))(inst[i]);
 			}
 			else
 			{
-				time_last_called[i] = time_next_call;
+				time_last_called[i] += time_delta;
 			}
-			(*(callbacks[i]))(inst[i]);
 		}
 	}
 }

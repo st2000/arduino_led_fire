@@ -1,20 +1,23 @@
 #include <Lights.h>
 #include <Timer.h>
 
+// Assign pin 8 to a red LED.
+Lights red_ambulance(8);
 // Assign pin 9 to the yellow LED.
-Lights fire_yellow(9);
+Lights yellow_fire(9);
 // Assign pin 10 to the red LED.
-Lights beacon_red(10);
+Lights red_firetruck(10);
 // Assign pin 10 to the gren LED.
-Lights beacon_green(11);
+Lights green_building(11);
 
 Timer timer;
 
 void setup()
 {
-	fire_yellow.begin();
-	beacon_red.begin(LIGHTS_FAST_BEACON, BEACON_MIN, BEACON_MEDIUM, LIGHTS_BEACON);
-	beacon_green.begin(LIGHTS_SLOW_BEACON, BEACON_MIN, BEACON_MAX, LIGHTS_BEACON);
+	red_ambulance.begin((uint8_t)LIGHTS_FAST_BEACON, (uint8_t)LIGHTS_AMBULANCE);
+	yellow_fire.begin();
+	red_firetruck.begin(LIGHTS_FAST_BEACON, BEACON_MIN, BEACON_MEDIUM, LIGHTS_BEACON);
+	green_building.begin(LIGHTS_SLOW_BEACON, BEACON_MIN, BEACON_MAX, LIGHTS_BEACON);
 }
 
 void loop()

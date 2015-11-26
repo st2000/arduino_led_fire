@@ -17,15 +17,19 @@
 // (Only delay on the first LED.  Otherwise
 //  each additional LED burn() call will cause
 //  a delay.)
-#define LIGHTS_FAST_FLICKER 2
-#define LIGHTS_NORMAL_FLICKER 4
-#define LIGHTS_SLOW_FLICKER 6
-#define LIGHTS_FAST_BEACON 6
+#define LIGHTS_FAST_FLICKER 5
+#define LIGHTS_NORMAL_FLICKER 10
+#define LIGHTS_SLOW_FLICKER 20
+#define LIGHTS_FAST_BEACON 5
 #define LIGHTS_SLOW_BEACON 20
 // Here are two pattern modes.  For
 // fire and for beacon.
-#define LIGHTS_FIRE 0
-#define LIGHTS_BEACON 1
+enum
+{
+	LIGHTS_FIRE = 0,
+	LIGHTS_BEACON,
+	LIGHTS_AMBULANCE,
+};
 		
 class Lights 
 {
@@ -37,8 +41,11 @@ class Lights
 	void begin(uint8_t);
 	void begin(uint8_t, uint16_t, uint16_t);
 	void begin(uint8_t, uint16_t, uint16_t, uint8_t);
+	static void call_into_lights(void *);
 	void burn();
-	static void call_into_lights(void *);;
+	void begin(uint8_t, uint8_t);
+	static void call_into_flash(void *);
+	void flash();
 	
 	private:
 	
@@ -46,7 +53,7 @@ class Lights
 	uint8_t private_led_pin;	
 	uint16_t crc;
 	uint8_t brightness;
-	uint8_t fade_amount;
+	int8_t fade_amount;
 	bool fade_direction;
 	uint8_t fade_loop;
 	uint8_t fade_delay;

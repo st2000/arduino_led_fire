@@ -36,6 +36,7 @@ class Lights
 	public:
 	
 	Lights(uint8_t led_pin);
+	Lights(uint8_t led_pin_00, uint8_t led_pin_01);
 	~Lights();
 	void begin();
 	void begin(uint8_t);
@@ -51,6 +52,8 @@ class Lights
 	
 	void algorithm();
 	uint8_t private_led_pin;	
+	uint8_t private_led_pin_00;	
+	uint8_t private_led_pin_01;	
 	uint16_t crc;
 	uint8_t brightness;
 	int8_t fade_amount;

@@ -10,13 +10,20 @@ Lights::Lights(uint8_t led_pin):private_led_pin(led_pin)
 	pinMode(private_led_pin, OUTPUT);
 }
 
+// Constructor uses passed value to create an instance for that Arduino Uno pin.
+Lights::Lights(uint8_t led_pin_00, uint8_t led_pin_01):private_led_pin_00(led_pin_00), private_led_pin_01(led_pin_01)
+{
+	pinMode(private_led_pin_00, OUTPUT);
+	pinMode(private_led_pin_01, OUTPUT);
+}
+
 // Destructor.
 Lights::~Lights(){/*nothing to destruct*/}
 
 // Start fire or beacon light show.
 void Lights::begin()
 {
-	begin(LIGHTS_NORMAL_FLICKER, LIGHTS_NORMAL_MIN, LIGHTS_NORMAL_MAX, LIGHTS_FIRE);
+	begin(LIGHTS_FAST_FLICKER, LIGHTS_NORMAL_MIN, LIGHTS_NORMAL_MAX, LIGHTS_FIRE);
 }
 
 // Start fire or beacon light show.
@@ -143,17 +150,35 @@ void Lights::flash()
 		brightness--;
 	}
 	
-	if(
-			((brightness > 110) && (brightness < 120)) ||
-			((brightness > 130) && (brightness < 140)) ||
-			((brightness > 150) && (brightness < 160))
-			)
+	if(fade_direction)
 	{
-		digitalWrite(private_led_pin, HIGH);
+		if(
+				((brightness > 40) && (brightness < 50)) ||
+				((brightness > 70) && (brightness < 80)) ||
+				((brightness > 90) && (brightness < 100))
+				)
+		{
+			digitalWrite(private_led_pin_00, HIGH);
+		}
+		else
+		{
+			digitalWrite(private_led_pin_00, LOW);
+		}
 	}
 	else
 	{
-		digitalWrite(private_led_pin, LOW);
+		if(
+				((brightness > 40) && (brightness < 50)) ||
+				((brightness > 70) && (brightness < 80)) ||
+				((brightness > 90) && (brightness < 100))
+				)
+		{
+			digitalWrite(private_led_pin_01, HIGH);
+		}
+		else
+		{
+			digitalWrite(private_led_pin_01, LOW);
+		}
 	}
 	
 	// Switch direction at limit.
@@ -163,7 +188,7 @@ void Lights::flash()
 	}
 	else
 	{
-		if (brightness == 0xff)
+		if (brightness == 0x7f)
 		{
 			fade_direction = false;
 		}

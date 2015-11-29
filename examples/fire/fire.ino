@@ -14,7 +14,6 @@ Timer timer;
 
 void setup()
 {
-///	red_ambulance.begin((uint8_t)LIGHTS_FAST_BEACON, (uint8_t)LIGHTS_AMBULANCE);
 	red_ambulance.begin(LIGHTS_FAST_BEACON, LIGHTS_AMBULANCE);
 	yellow_fire.begin();
 	red_firetruck.begin(LIGHTS_FAST_BEACON, BEACON_MIN, BEACON_MEDIUM, LIGHTS_BEACON);

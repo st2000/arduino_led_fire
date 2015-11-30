@@ -22,6 +22,9 @@
 #define LIGHTS_SLOW_FLICKER 20
 #define LIGHTS_FAST_BEACON 5
 #define LIGHTS_SLOW_BEACON 20
+#define LIGHTS_FAST_TRAFFIC 50
+#define LIGHTS_NORMAL_TRAFFIC 75
+#define LIGHTS_SLOW_TRAFFIC 100
 // Here are two pattern modes.  For
 // fire and for beacon.
 enum
@@ -29,6 +32,7 @@ enum
 	LIGHTS_FIRE = 0,
 	LIGHTS_BEACON,
 	LIGHTS_AMBULANCE,
+	LIGHTS_TRAFFIC,
 };
 		
 class Lights 
@@ -37,6 +41,8 @@ class Lights
 	
 	Lights(uint8_t led_pin);
 	Lights(uint8_t led_pin_00, uint8_t led_pin_01);
+	Lights(uint8_t led_pin_00, uint8_t led_pin_01, uint8_t led_pin_02);
+	Lights(uint8_t led_pin_00, uint8_t led_pin_01, uint8_t led_pin_02, uint8_t led_pin_03, uint8_t led_pin_04, uint8_t led_pin_05);
 	~Lights();
 	void begin();
 	void begin(uint8_t);
@@ -47,13 +53,18 @@ class Lights
 	void begin(uint8_t, uint8_t);
 	static void call_into_flash(void *);
 	void flash();
+	static void call_into_traffic(void *);
+	void traffic();
 	
 	private:
 	
 	void algorithm();
-	uint8_t private_led_pin;	
 	uint8_t private_led_pin_00;	
 	uint8_t private_led_pin_01;	
+	uint8_t private_led_pin_02;	
+	uint8_t private_led_pin_03;	
+	uint8_t private_led_pin_04;	
+	uint8_t private_led_pin_05;	
 	uint16_t crc;
 	uint8_t brightness;
 	int8_t fade_amount;
@@ -63,6 +74,8 @@ class Lights
 	uint16_t fade_min_limit;
 	uint16_t fade_max_limit;
 	uint8_t fade_mode;
+	void redYellowGreen(uint8_t);
+	bool mode_traffic_full;
 };
 
 #endif

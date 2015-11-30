@@ -5,9 +5,9 @@
 extern Timer timer;
 
 // Constructor uses passed value to create an instance for that Arduino Uno pin.
-Lights::Lights(uint8_t led_pin):private_led_pin(led_pin)
+Lights::Lights(uint8_t led_pin):private_led_pin_00(led_pin)
 {
-	pinMode(private_led_pin, OUTPUT);
+	pinMode(private_led_pin_00, OUTPUT);
 }
 
 // Constructor uses passed value to create an instance for that Arduino Uno pin.
@@ -15,6 +15,33 @@ Lights::Lights(uint8_t led_pin_00, uint8_t led_pin_01):private_led_pin_00(led_pi
 {
 	pinMode(private_led_pin_00, OUTPUT);
 	pinMode(private_led_pin_01, OUTPUT);
+}
+
+// Constructor uses passed value to create an instance for that Arduino Uno pin.
+Lights::Lights(uint8_t led_pin_00, uint8_t led_pin_01, uint8_t led_pin_02):
+private_led_pin_00(led_pin_00), private_led_pin_01(led_pin_01), private_led_pin_02(led_pin_02)
+{
+	pinMode(private_led_pin_00, OUTPUT);
+	pinMode(private_led_pin_01, OUTPUT);
+	pinMode(private_led_pin_02, OUTPUT);
+	mode_traffic_full = false;
+	fade_direction = false;
+	brightness = 1;
+}
+
+// Constructor uses passed value to create an instance for that Arduino Uno pin.
+Lights::Lights(uint8_t led_pin_00, uint8_t led_pin_01, uint8_t led_pin_02, uint8_t led_pin_03, uint8_t led_pin_04, uint8_t led_pin_05):
+private_led_pin_00(led_pin_00), private_led_pin_01(led_pin_01), private_led_pin_02(led_pin_02), private_led_pin_03(led_pin_03), private_led_pin_04(led_pin_04), private_led_pin_05(led_pin_05)
+{
+	pinMode(private_led_pin_00, OUTPUT);
+	pinMode(private_led_pin_01, OUTPUT);
+	pinMode(private_led_pin_02, OUTPUT);
+	pinMode(private_led_pin_03, OUTPUT);
+	pinMode(private_led_pin_04, OUTPUT);
+	pinMode(private_led_pin_05, OUTPUT);
+	mode_traffic_full = true;
+	fade_direction = false;
+	brightness = 1;
 }
 
 // Destructor.
@@ -42,7 +69,7 @@ void Lights::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, ui
 void Lights::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, uint16_t formal_fade_max_limit, uint8_t formal_mode)
 {
 	// Use the unique pin number as the seed for the CRC16 generator. 
-	crc = private_led_pin;
+	crc = private_led_pin_00;
 	brightness = 128;
 	fade_amount = 10;
 	fade_direction = true;
@@ -54,11 +81,22 @@ void Lights::begin(uint8_t formal_fade_delay, uint16_t formal_fade_min_limit, ui
 	timer.speed((uint16_t)fade_delay, this->call_into_lights, this); 
 }
 
-// Start flash (ambulance) light show.
+// Start flash ambulance or traffic-lights light show.
 void Lights::begin(uint8_t formal_fade_delay, uint8_t formal_mode)
 {
-	fade_delay = formal_fade_delay;
-	timer.speed((uint16_t)fade_delay, this->call_into_flash, this); 
+	if(formal_mode == LIGHTS_AMBULANCE)
+	{
+		fade_delay = formal_fade_delay;
+		timer.speed((uint16_t)fade_delay, this->call_into_flash, this); 
+	}
+	else
+	{
+		if(formal_mode == LIGHTS_TRAFFIC)
+		{
+			fade_delay = formal_fade_delay;
+			timer.speed((uint16_t)fade_delay, this->call_into_traffic, this); 
+		}
+	}
 }
 
 // Run the fire and / or beacon algorithm.
@@ -80,7 +118,7 @@ void Lights::burn()
 		{
 			brightness--;
 		}
-		analogWrite(private_led_pin, brightness);
+		analogWrite(private_led_pin_00, brightness);
 		
 		// Pick a minimum brightness limit.
 		if (brightness < fade_min_limit)
@@ -100,7 +138,7 @@ void Lights::burn()
 }
 
 
-// Run the fire algorithm.
+// Run the fire & beacon algorithm.
 void Lights::algorithm()
 {
 	// Exclusive or all feed back bits.
@@ -188,9 +226,152 @@ void Lights::flash()
 	}
 	else
 	{
-		if (brightness == 0x7f)
+		if (brightness >= 0x7f)
 		{
 			fade_direction = false;
+		}
+	}
+}
+
+
+// Run the traffic algorithm.
+void Lights::traffic()
+{
+	if(fade_direction)
+	{
+		brightness++;
+	}
+	else
+	{
+		brightness--;
+	}
+	
+	if(fade_direction)
+	{
+		if(brightness == 0)
+		{
+			redYellowGreen(private_led_pin_00);
+			if(mode_traffic_full)
+			{
+				redYellowGreen(private_led_pin_05);
+			}
+		}
+		else
+		{
+			if(brightness == 80)
+			{
+				redYellowGreen(private_led_pin_01);
+			}
+			else
+			{
+				if(brightness == 100)
+				{
+					redYellowGreen(private_led_pin_02);
+					if(mode_traffic_full)
+					{
+						redYellowGreen(private_led_pin_03);
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		if(brightness == 100)
+		{
+			redYellowGreen(private_led_pin_02);
+			if(mode_traffic_full)
+			{
+				redYellowGreen(private_led_pin_03);
+			}
+		}
+		else
+		{
+			if(brightness == 20)
+			{
+				if(mode_traffic_full)
+				{
+					redYellowGreen(private_led_pin_04);
+				}
+			}
+			else
+			{
+				if(brightness == 0)
+				{
+					redYellowGreen(private_led_pin_00);
+					if(mode_traffic_full)
+					{
+						redYellowGreen(private_led_pin_05);
+					}
+				}
+			}
+		}
+	}
+	
+	// Switch direction at limit.
+	if (brightness == 0)
+	{
+		fade_direction = true;
+	}
+	else
+	{
+		if (brightness >= 100)
+		{
+			fade_direction = false;
+		}
+	}
+}
+
+void Lights::redYellowGreen(uint8_t formal_pin)
+{
+	// Then only turn on the 1 LED passed to us.
+	if(formal_pin == private_led_pin_00)
+	{
+		digitalWrite(private_led_pin_00, HIGH);
+		digitalWrite(private_led_pin_01, LOW);
+		digitalWrite(private_led_pin_02, LOW);
+	}
+	else
+	{
+		if(formal_pin == private_led_pin_01)
+		{
+			digitalWrite(private_led_pin_00, LOW);
+			digitalWrite(private_led_pin_01, HIGH);
+			digitalWrite(private_led_pin_02, LOW);
+		}
+		else
+		{
+			if(formal_pin == private_led_pin_02)
+			{
+				digitalWrite(private_led_pin_00, LOW);
+				digitalWrite(private_led_pin_01, LOW);
+				digitalWrite(private_led_pin_02, HIGH);
+			}
+		}
+	}
+
+	if(formal_pin == private_led_pin_03)
+	{
+		digitalWrite(private_led_pin_03, HIGH);
+		digitalWrite(private_led_pin_04, LOW);
+		digitalWrite(private_led_pin_05, LOW);
+	}
+	else
+	{
+		if(formal_pin == private_led_pin_04)
+		{
+			digitalWrite(private_led_pin_03, LOW);
+			digitalWrite(private_led_pin_04, HIGH);
+			digitalWrite(private_led_pin_05, LOW);
+		}
+		else
+		{
+			if(formal_pin == private_led_pin_05)
+			{
+				digitalWrite(private_led_pin_03, LOW);
+				digitalWrite(private_led_pin_04, LOW);
+				digitalWrite(private_led_pin_05, HIGH);
+			}
 		}
 	}
 }
@@ -205,6 +386,12 @@ void Lights::call_into_lights(void * p)
 void Lights::call_into_flash(void * p)
 {
 	((Lights *)p)->flash();
+}
+
+
+void Lights::call_into_traffic(void * p)
+{
+	((Lights *)p)->traffic();
 }
 
 
